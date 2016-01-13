@@ -1,0 +1,25 @@
+{
+  "name": "node-nest-runabove-iot",
+  "version": "0.0.1",
+  "description": "",
+  "author": "Antoine Leveugle",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/denouche/node-nest-runabove-iot.git"
+  },
+  "bugs": {
+    "url": "http://github.com/denouche/node-nest-runabove-iot/issues"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/main.js"
+  },
+  "main": "src/main.js",
+  "dependencies": {
+    "cron": "^1.1.0",
+    "lodash": "^4.0.0",
+    "nest-cloud-api": "0.0.1",
+    "request": "^2.67.0"
+  }
+}
