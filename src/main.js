@@ -44,6 +44,7 @@ function init() {
 					
 					series = lastOfEachMetric;
 					console.log('should push ', toSend)
+					console.log('reset series array to', series)
 					pushToRunAbove(toSend)
 						.catch(function(error) {
 							console.error('ERROR WHILE PUT TO RUNABOVE');
