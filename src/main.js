@@ -12,7 +12,7 @@ var myNest = new Nest(NEST_ACCESS_TOKEN),
 	pushSeries = false;
 
 function init() {
-	new CronJob('0 * * * * *', function() {
+	new CronJob('*/20 * * * * *', function() {
 		console.log('------------------------')
 		myNest.request({ uri: '/devices/thermostats' })
 			.then(function(data) {
@@ -30,18 +30,33 @@ function init() {
 					});
 				});
 
-				console.log('pushSeries', pushSeries)
 				if(pushSeries) {
 					pushSeries = false;
-					var toSend = _.cloneDeep(series);
-					series = [];
+					var toSend = _.cloneDeep(series),
+						lastOfEachMetric = [];
+					_.forEach(toSend, function(point) {
+						var foundPoint = _.find(lastOfEachMetric, {metric: point.metric});
+						if(!foundPoint || foundPoint.timestamp < point.timestamp) {
+							_.remove(lastOfEachMetric, {metric: point.metric});
+							lastOfEachMetric.push(point);
+						}
+					});
+					
+					series = lastOfEachMetric;
 					console.log('should push ', toSend)
-					pushToRunAbove(toSend);
+					pushToRunAbove(toSend)
+						.catch(function(error) {
+							console.error('ERROR WHILE PUT TO RUNABOVE');
+							// Error, we just repush all to put it next time
+							_.forEach(toSend, function(e) {
+								addPointIfNew(e);
+							});
+						});
 				}
 			});
 	}, null, true);
 
-	new CronJob('0 */5 * * * *', function() {
+	new CronJob('0 */1 * * * *', function() {
 		pushSeries = true;
 	}, null, true);
 }
@@ -59,7 +74,7 @@ function addPointIfNew(point) {
 }
 
 function pushToRunAbove(toSend) {
-	request({
+	return request({
 		uri: "https://opentsdb.iot.runabove.io/api/put",
 		auth: {
 			user: RUNABOVE_TOKEN_ID,
@@ -85,7 +100,7 @@ if(RUNABOVE_TOKEN_ID &&
 	RUNABOVE_TOKEN_KEY &&
 	NEST_ACCESS_TOKEN) {
 	init();
-}
+} 
 else {
 	console.error('Error, missing environment variables.');
 	console.error('RUNABOVE_TOKEN_ID, RUNABOVE_TOKEN_KEY and NEST_ACCESS_TOKEN should be defined.');
