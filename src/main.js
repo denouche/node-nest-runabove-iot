@@ -3,8 +3,8 @@ var request = require('request'),
 	CronJob = require('cron').CronJob,
 	_ = require('lodash');
 
-var RUNABOVE_TOKEN_ID = process.env.RUNABOVE_TOKEN_ID,
-	RUNABOVE_TOKEN_KEY = process.env.RUNABOVE_TOKEN_KEY,
+var RUNABOVE_WRITE_TOKEN_ID = process.env.RUNABOVE_WRITE_TOKEN_ID,
+	RUNABOVE_WRITE_TOKEN_KEY = process.env.RUNABOVE_WRITE_TOKEN_KEY,
 	NEST_ACCESS_TOKEN = process.env.NEST_ACCESS_TOKEN;
 
 var myNest = new Nest(NEST_ACCESS_TOKEN),
@@ -84,8 +84,8 @@ function pushToRunAbove(toSend) {
 	return request({
 		uri: "https://opentsdb.iot.runabove.io/api/put",
 		auth: {
-			user: RUNABOVE_TOKEN_ID,
-			pass: RUNABOVE_TOKEN_KEY,
+			user: RUNABOVE_WRITE_TOKEN_ID,
+			pass: RUNABOVE_WRITE_TOKEN_KEY,
 			sendImmediately: true
 		},
 		method: 'POST',
@@ -103,12 +103,12 @@ function pushToRunAbove(toSend) {
 }
 
 
-if(RUNABOVE_TOKEN_ID && 
-	RUNABOVE_TOKEN_KEY &&
+if(RUNABOVE_WRITE_TOKEN_ID && 
+	RUNABOVE_WRITE_TOKEN_KEY &&
 	NEST_ACCESS_TOKEN) {
 	init();
 } 
 else {
 	console.error('Error, missing environment variables.');
-	console.error('RUNABOVE_TOKEN_ID, RUNABOVE_TOKEN_KEY and NEST_ACCESS_TOKEN should be defined.');
+	console.error('RUNABOVE_WRITE_TOKEN_ID, RUNABOVE_WRITE_TOKEN_KEY and NEST_ACCESS_TOKEN should be defined.');
 }
