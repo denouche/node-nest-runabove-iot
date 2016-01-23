@@ -12,7 +12,7 @@ var myNest = new Nest(NEST_ACCESS_TOKEN),
 	pushSeries = false;
 
 function init() {
-	new CronJob('0 * * * * *', function() {
+	new CronJob('*/10 * * * * *', function() {
 		console.log('------------------------')
 		myNest.request({ uri: '/devices/thermostats' })
 			.then(function(data) {
@@ -29,11 +29,25 @@ function init() {
 						value: thermostat.target_temperature_c
 					});
 
-					addPointIfNew({
-						metric: 'nest-state_' + thermostat.name.replace(/[^\w]/g, '-'),
-						timestamp: Math.floor(Date.parse(thermostat.last_connection) / 1000),
-						value: thermostat.hvac_state
-					});
+					var status;
+					switch(thermostat.hvac_state) {
+						case 'off':
+							status = 0;
+							break;
+						case 'heating':
+							status = 1;
+							break;
+						case 'cooling':
+							status = -1;
+							break;
+					}
+					if(status !== undefined) {
+						addPointIfNew({
+							metric: 'nest-state_' + thermostat.name.replace(/[^\w]/g, '-'),
+							timestamp: Math.floor(Date.parse(thermostat.last_connection) / 1000),
+							value: status
+						});
+					}
 				});
 
 				if(pushSeries) {
