@@ -12,7 +12,7 @@ var myNest = new Nest(NEST_ACCESS_TOKEN),
 	pushSeries = false;
 
 function init() {
-	new CronJob('*/10 * * * * *', function() {
+	new CronJob('*0 * * * * *', function() {
 		console.log('------------------------')
 		myNest.request({ uri: '/devices/thermostats' })
 			.then(function(data) {
