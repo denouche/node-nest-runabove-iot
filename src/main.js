@@ -18,15 +18,21 @@ function init() {
 			.then(function(data) {
 				_.forEach(data, function(thermostat) {
 					addPointIfNew({
-						metric: 'nest-current_' + thermostat.name.replace(/\s/g, '-'),
+						metric: 'nest-current_' + thermostat.name.replace(/[^\w]/g, '-'),
 						timestamp: Math.floor(Date.parse(thermostat.last_connection) / 1000),
 						value: thermostat.ambient_temperature_c
 					});
 					
 					addPointIfNew({
-						metric: 'nest-target_' + thermostat.name.replace(/\s/g, '-'),
+						metric: 'nest-target_' + thermostat.name.replace(/[^\w]/g, '-'),
 						timestamp: Math.floor(Date.parse(thermostat.last_connection) / 1000),
 						value: thermostat.target_temperature_c
+					});
+
+					addPointIfNew({
+						metric: 'nest-state_' + thermostat.name.replace(/[^\w]/g, '-'),
+						timestamp: Math.floor(Date.parse(thermostat.last_connection) / 1000),
+						value: thermostat.hvac_state
 					});
 				});
 
