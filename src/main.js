@@ -49,8 +49,7 @@ function init() {
 					});
 					
 					series = lastOfEachMetric;
-					console.log('should push ', toSend)
-					console.log('reset series array to', series)
+					console.log('PUT_array', toSend)
 					pushToRunAbove(toSend)
 						.catch(function(error) {
 							console.error('ERROR WHILE PUT TO RUNABOVE');
@@ -71,12 +70,10 @@ function init() {
 function addPointIfNew(point) {
 	if(!_.some(series, { metric: point.metric, timestamp: point.timestamp })) {
 		series.push(point);
-		console.log('push point', point.timestamp, point.value)
-		console.log('push point', new Date(point.timestamp * 1000).toISOString(), point.value)
+		console.log('push_point', point.timestamp, new Date(point.timestamp * 1000).toISOString(), point.value)
 	}
 	else {
-		console.log('point ', point.timestamp, 'already present', point.value)
-		console.log('point ', new Date(point.timestamp * 1000).toISOString(), 'already present', point.value)
+		console.log('point', point.timestamp, new Date(point.timestamp * 1000).toISOString(), 'already present', point.value)
 	}
 }
 
