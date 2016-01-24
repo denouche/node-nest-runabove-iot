@@ -13,7 +13,6 @@ var myNest = new Nest(NEST_ACCESS_TOKEN),
 
 function init() {
 	new CronJob('0 * * * * *', function() {
-		console.log('------------------------')
 		myNest.request()
 			.then(function(data) {
 				var thermostats = data.devices.thermostats,
@@ -22,8 +21,8 @@ function init() {
 
 				_.forEach(thermostats, function(thermostat) {
 					var isPointAlreadyPresent = _.some(series, { timestamp: Math.floor(Date.parse(thermostat.last_connection) / 1000) });
-					console.log(thermostat.last_connection, isPointAlreadyPresent)
 					if(!isPointAlreadyPresent) {
+						console.info('------------------------')
 						console.info('add new point', thermostat.last_connection);
 
 						series.push({
